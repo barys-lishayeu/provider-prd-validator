@@ -1,7 +1,6 @@
 package com.tsm.prd.objects;
 
-public interface FileInfoBo {
-    FileInfo withBoFileName(String boFileName);
+public interface ConfigBo {
     String getBoFileName();
     void setBoHeaders(String[] boHeaders);
     String[] getBoHeaders();

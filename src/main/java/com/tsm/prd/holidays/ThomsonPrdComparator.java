@@ -3,9 +3,8 @@ package com.tsm.prd.holidays;
 import au.com.bytecode.opencsv.CSVReader;
 import com.tsm.prd.PrdComparator;
 import com.tsm.prd.objects.Airports;
-import com.tsm.prd.objects.FileInfoPrdPartner;
+import com.tsm.prd.objects.ConfigPrdPartner;
 import com.tsm.prd.objects.Route;
-import com.tsm.prd.objects.header.HeaderIndex;
 import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
@@ -27,20 +26,19 @@ public class ThomsonPrdComparator extends PrdComparator {
     }
 
     @Override
-    public ListMultimap<String, Route> loadPartnerRoutes(final FileInfoPrdPartner info) {
+    public ListMultimap<String, Route> loadPartnerRoutes(final ConfigPrdPartner info) {
         final ListMultimap<String, Route> routes = ArrayListMultimap.create();
-        final HeaderIndex headerIndex = info.getPartnerIndexes();
 
         try (final CSVReader importReader = new CSVReader(new BufferedReader(new FileReader(new File(providerPath() + info.getPartnerFileName()))))) {
             info.setPartnerHeaders(importReader.readNext());
 
             for (String[] line = importReader.readNext(); line != null; line = importReader.readNext()) {
-                final String dirtyDeparture = line[headerIndex.getDepIndex()];
+                final String dirtyDeparture = line[info.getDepartureIndex()];
                 if (Strings.isNullOrEmpty(dirtyDeparture)) {
                     continue;
                 }
 
-                final String destination = getDestinationByIndex(line, headerIndex);
+                final String destination = getDestinationByIndex(line, info.getDestinationIndexes());
 
                 for (String airportStr : COMMA_SPLITTER.split(dirtyDeparture)) {
                     String departureAirport = airportStr;

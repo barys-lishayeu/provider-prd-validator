@@ -7,17 +7,10 @@ import com.tsm.prd.matchers.CodeMatcher;
 import com.tsm.prd.matchers.FirstCommaMatcher;
 import com.tsm.prd.matchers.MatcherUtil;
 import com.tsm.prd.matchers.UnderscoreMatcher;
-import com.tsm.prd.objects.AsArray;
-import com.tsm.prd.objects.FileInfoBo;
-import com.tsm.prd.objects.FileInfoMappings;
-import com.tsm.prd.objects.FileInfoPrdPartner;
-import com.tsm.prd.objects.OutputRoute;
+import com.tsm.prd.objects.*;
+import com.tsm.prd.objects.ConfigBo;
 import com.tsm.prd.objects.header.BoHeader;
 import com.tsm.prd.objects.header.BoHeaderHolder;
-import com.tsm.prd.objects.header.HeaderIndex;
-import com.tsm.prd.objects.Mappings;
-import com.tsm.prd.objects.Route;
-import com.tsm.prd.objects.StepMessage;
 import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
@@ -48,14 +41,15 @@ public abstract class DataManager {
     private static final List<String> MAPPINGS_INPUT_KEYS = Lists.newArrayList("Destination", "Departure");
     public static final String DELIMETER = "_";
     public static final String EXT = ".csv";
+    private String rootPath = "";
 
-    public abstract ListMultimap<String, Route> loadPartnerRoutes(final FileInfoPrdPartner info);
+    public abstract ListMultimap<String, Route> loadPartnerRoutes(final ConfigPrdPartner info);
 
     /**
-     * @param info FileInfoBo
+     * @param info ConfigBo
      * @return key - code like LON, LGW
      */
-    protected ListMultimap<String, Route> loadBoRoutes(FileInfoBo info) {
+    protected ListMultimap<String, Route> loadBoRoutes(ConfigBo info) {
         final ListMultimap<String, Route> routes = ArrayListMultimap.create();
 
         try (final CSVReader iReader = new CSVReader(new BufferedReader(new FileReader(new File(providerPath() + info.getBoFileName()))))) {
@@ -103,7 +97,7 @@ public abstract class DataManager {
         return outputRoutes;
     }
 
-    protected ListMultimap<String, Mappings> loadMappings(FileInfoMappings info) {
+    protected ListMultimap<String, Mappings> loadMappings(ConfigMappings info) {
         final ListMultimap<String, Mappings> mappings = ArrayListMultimap.create();
 
         try (final CSVReader iReader = new CSVReader(new BufferedReader(new FileReader(new File(providerPath() + info.getMappingsFileName()))))) {
@@ -121,9 +115,9 @@ public abstract class DataManager {
         return mappings;
     }
 
-    protected String getDestinationByIndex(final String[] strings, HeaderIndex headerIndex) {
+    protected String getDestinationByIndex(final String[] strings, int[] headerIndex) {
         String result = null;
-        for (int index : headerIndex.getDesIndexes()) {
+        for (int index : headerIndex) {
             checkElementIndex(index, strings.length);
             final String value = strings[index];
             if (!Strings.isNullOrEmpty(value)) {
@@ -162,7 +156,7 @@ public abstract class DataManager {
     }
 
     protected String providerPath() {
-        return Main.ROOT + File.separator + getProviderName() + File.separator;
+        return rootPath + File.separator + getProviderName() + File.separator;
     }
 
     protected void cleanBoRoute(Route route) {
@@ -180,6 +174,10 @@ public abstract class DataManager {
         route.setDepartureName(newDeparture.or(route.getDepartureName()));
         // clean destination
         route.setDestinationName(route.getDestinationName().toLowerCase().trim());
+    }
+
+    public void setRootPath(String rootPath) {
+        this.rootPath = rootPath;
     }
 
     public abstract String getProviderName();
