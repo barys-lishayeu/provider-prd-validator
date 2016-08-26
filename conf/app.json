@@ -1,0 +1,26 @@
+{
+  "rootPath": "/d_drive/kadri/Teletext",
+  "providers": [
+    {
+      "providerName" : "teletext",
+      "boFileName": "holidays-routes-Teletext-Holidays-(08-10-2016).csv",
+      "partnerFileName": "Departure_Airport_Destination_List.csv",
+      "partnerIndexes": "1,2,3,4",
+      "mappingsFileName": "Teletext-Holidays-(08-10-2016).csv"
+    },
+    {
+      "providerName" : "british_airway",
+      "boFileName": "holidays-routes-British-Airways-live-(08-05-2016).csv",
+      "partnerFileName": "BA_PRD_02_03_2016.csv",
+      "partnerIndexes": "12,0,1,2",
+      "mappingsFileName": "British-Airways-mappings-live-(08-05-2016).csv"
+    },
+    {
+      "providerName" : "thomson",
+      "boFileName": "holidays-routes-Thomson-(08-10-2016).csv",
+      "partnerFileName": "Thomson_PRD_v1_6.csv",
+      "partnerIndexes": "12,0,1,2",
+      "mappingsFileName": "Thomson-mappings(08-11-2016).csv"
+    }
+  ]
+}
