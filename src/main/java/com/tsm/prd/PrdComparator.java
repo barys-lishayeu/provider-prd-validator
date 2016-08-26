@@ -1,7 +1,7 @@
 package com.tsm.prd;
 
+import com.tsm.prd.config.ProviderConfig;
 import com.tsm.prd.objects.Airports;
-import com.tsm.prd.objects.FileInfo;
 import com.tsm.prd.objects.Mappings;
 import com.tsm.prd.objects.Route;
 import com.tsm.prd.objects.StepMessage;
@@ -26,7 +26,7 @@ public abstract class PrdComparator extends DataManager {
      *
      * @param info info
      */
-    public void run(FileInfo info) {
+    public void run(ProviderConfig info) {
         ListMultimap<String, Route> boDirtyRoutes = loadBoRoutes(info);
         ListMultimap<String, Route> partnerDirtyRoutes = loadPartnerRoutes(info);
         ListMultimap<String, Mappings> mappings = loadMappings(info);

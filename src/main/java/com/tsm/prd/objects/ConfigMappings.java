@@ -1,8 +1,6 @@
 package com.tsm.prd.objects;
 
-public interface FileInfoMappings {
-    FileInfo withMappingsFileName(String mappingsFileName);
-
+public interface ConfigMappings {
     String getMappingsFileName();
 
     void setMappingsHeaders(String[] mappingsHeaders);
