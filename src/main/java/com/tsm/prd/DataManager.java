@@ -41,7 +41,6 @@ public abstract class DataManager {
     private static final List<String> MAPPINGS_INPUT_KEYS = Lists.newArrayList("Destination", "Departure");
     public static final String DELIMETER = "_";
     public static final String EXT = ".csv";
-    private String rootPath = "";
 
     public abstract ListMultimap<String, Route> loadPartnerRoutes(final ConfigPrdPartner info);
 
@@ -156,7 +155,7 @@ public abstract class DataManager {
     }
 
     protected String providerPath() {
-        return rootPath + File.separator + getProviderName() + File.separator;
+        return getRootPath() + File.separator + getProviderName() + File.separator;
     }
 
     protected void cleanBoRoute(Route route) {
@@ -176,9 +175,6 @@ public abstract class DataManager {
         route.setDestinationName(route.getDestinationName().toLowerCase().trim());
     }
 
-    public void setRootPath(String rootPath) {
-        this.rootPath = rootPath;
-    }
-
     public abstract String getProviderName();
+    public abstract String getRootPath();
 }

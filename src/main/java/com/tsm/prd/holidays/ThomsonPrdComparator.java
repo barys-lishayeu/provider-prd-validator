@@ -1,7 +1,7 @@
 package com.tsm.prd.holidays;
 
 import au.com.bytecode.opencsv.CSVReader;
-import com.tsm.prd.PrdComparator;
+import com.tsm.prd.PrdComparatorImpl;
 import com.tsm.prd.objects.Airports;
 import com.tsm.prd.objects.ConfigPrdPartner;
 import com.tsm.prd.objects.Route;
@@ -17,13 +17,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class ThomsonPrdComparator extends PrdComparator {
+public class ThomsonPrdComparator extends PrdComparatorImpl {
     private static final Logger LOGGER = LoggerFactory.getLogger(ThomsonPrdComparator.class);
-
-    @Override
-    public String getProviderName() {
-        return "thomson";
-    }
 
     @Override
     public ListMultimap<String, Route> loadPartnerRoutes(final ConfigPrdPartner info) {
