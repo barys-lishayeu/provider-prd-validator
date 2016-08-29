@@ -17,9 +17,8 @@ public class Main {
 
         for (ProviderConfig providerConfig : appConfig.getProviderConfigs()) {
             final Class providerClass = Class.forName(providerConfig.getProviderClass());
-            final PrdComparator prdComparator = (PrdComparator) providerClass.newInstance();
-            prdComparator.setRootPath(appConfig.getRootPath());
-            prdComparator.run(providerConfig);
+            final PrdComparator prdComparator = (PrdComparatorImpl) providerClass.newInstance();
+            prdComparator.run(providerConfig, appConfig.getRootPath());
         }
     }
 }
