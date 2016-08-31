@@ -11,9 +11,7 @@ import com.tsm.prd.objects.*;
 import com.tsm.prd.objects.ConfigBo;
 import com.tsm.prd.objects.header.BoHeader;
 import com.tsm.prd.objects.header.BoHeaderHolder;
-import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
-import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
@@ -37,7 +35,6 @@ import static com.google.common.base.Preconditions.checkElementIndex;
  */
 public abstract class DataManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(DataManager.class);
-    private static final Joiner JOINER = Joiner.on(", ").skipNulls();
     private static final List<String> MAPPINGS_INPUT_KEYS = Lists.newArrayList("Destination", "Departure");
     public static final String DELIMETER = "_";
     public static final String EXT = ".csv";
@@ -114,16 +111,12 @@ public abstract class DataManager {
         return mappings;
     }
 
-    protected String getDestinationByIndex(final String[] strings, int[] headerIndex) {
-        String result = null;
-        for (int index : headerIndex) {
-            checkElementIndex(index, strings.length);
-            final String value = strings[index];
-            if (!Strings.isNullOrEmpty(value)) {
-                result = JOINER.join(value, result);
-            }
-        }
-        return result;
+    protected OriginDestination getDestinationByIndex(final String[] strings, int[] headerIndex) {
+        checkElementIndex(headerIndex.length - 1, headerIndex.length);
+        final String country = strings[headerIndex[0]];
+        final String destination = strings[headerIndex[1]];
+        final String resort = strings[headerIndex[2]];
+        return new OriginDestination(country, destination, resort);
     }
 
     /**
