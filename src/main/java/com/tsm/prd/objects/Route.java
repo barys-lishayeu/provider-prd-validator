@@ -10,10 +10,12 @@ public class Route implements AsArray {
     private String destinationId;
     private String[] original;
     private List<OutputRoute> outputRoutes;
+    private OriginDestination originDestination;//only from partner prd
 
-    public Route(String departureName, String destinationName, String[] original) {
+    public Route(String departureName, String destinationName, OriginDestination originDestination, String[] original) {
         this.departureName = departureName;
         this.destinationName = destinationName;
+        this.originDestination = originDestination;
         this.original = original;
     }
 
@@ -25,6 +27,10 @@ public class Route implements AsArray {
         this.destinationId = destinationId;
         this.original = original;
         this.outputRoutes = outputRoutes;
+    }
+
+    public OriginDestination getOriginDestination() {
+        return originDestination;
     }
 
     public String getDepartureId() {

@@ -4,6 +4,7 @@ import au.com.bytecode.opencsv.CSVReader;
 import com.tsm.prd.PrdComparatorImpl;
 import com.tsm.prd.objects.Airports;
 import com.tsm.prd.objects.ConfigPrdPartner;
+import com.tsm.prd.objects.OriginDestination;
 import com.tsm.prd.objects.Route;
 import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
@@ -33,7 +34,7 @@ public class BritishAirwayPrdComparator extends PrdComparatorImpl {
                     continue;
                 }
 
-                final String destination = getDestinationByIndex(line, info.getDestinationIndexes());
+                final OriginDestination destination = getDestinationByIndex(line, info.getDestinationIndexes());
 
                 for (String airportStr : COMMA_SPLITTER.split(dirtyDeparture)) {
                     String departureAirport = airportStr;
@@ -41,7 +42,7 @@ public class BritishAirwayPrdComparator extends PrdComparatorImpl {
                         departureAirport = Airports.getAirportByNumber(airportStr);
                     }
 
-                    Route route = new Route(departureAirport, destination, line);
+                    Route route = new Route(departureAirport, destination.toString(), destination, line);
                     cleanPartnerRoute(route);
                     routes.put(departureAirport, route);
                 }

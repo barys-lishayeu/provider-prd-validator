@@ -1,15 +1,14 @@
 package com.tsm.prd;
 
+import com.google.common.base.Optional;
 import com.tsm.prd.config.ProviderConfig;
-import com.tsm.prd.objects.Airports;
-import com.tsm.prd.objects.Mappings;
-import com.tsm.prd.objects.Route;
-import com.tsm.prd.objects.StepMessage;
+import com.tsm.prd.objects.*;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Sets;
 import javafx.util.Pair;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -56,7 +55,7 @@ public abstract class PrdComparatorImpl extends DataManager implements PrdCompar
         // all routes that serve single airport also appear in the airport group setup
         final Set<Route> routesNotGrouped = new HashSet<>();
         for (Route route : partnerRoutes) {
-            List<String> group = Airports.getAirportsGroupsByChild(route.getDepartureName());
+            final List<String> group = Airports.getAirportsGroupsByChild(route.getDepartureName());
             if (!group.isEmpty()) {
                 for (String airportFromGroup : group) {
                     if (isNotContainRoute(airportFromGroup.toLowerCase(), route.getDestinationName(), boRoutes)) {
@@ -69,21 +68,66 @@ public abstract class PrdComparatorImpl extends DataManager implements PrdCompar
 
         // input route and output route are matching the PRD mappings for:
         // when multiple resorts needs to be called for a region or vice versa in comparison with PRD.
-//        multipleResorts(partnerRoutes, boRoutes);//todo!!!!!!!!!!
+        Set<Route> multipleResortsRoutes = multipleResorts(partnerRoutes, boRoutes, providerConfig.isAirportGroupSupporting());
+        writeInCsv(multipleResortsRoutes, StepMessage.MULTIPLE_RESORTS, providerConfig.getBoHeaders());
     }
 
-    protected void multipleResorts(Set<Route> partnerRoutes, Set<Route> boRoutes) {
-        System.out.println("");
+
+    /**
+     * Some concerns:
+     * we can't match "Nissi Bay, Cyprus East, Cyprus" and "Cyprus East (incl Ayia Napa and Larnaca)"
+     */
+    protected Set<Route> multipleResorts(Set<Route> partnerRoutes, Set<Route> boRoutes, boolean isAirportGroupSupporting) {
+        final Set<Route> resultRoutes = new HashSet<>();
+        final Set<Route> routesWithAirportGroupForChecking = new HashSet<>();
 
 
-        for(Route partnerRoute: partnerRoutes) {
-            for(Route boRoute: boRoutes) {
+        for (final Route boRoute : boRoutes) {
+            for (final Route partnerRoute : partnerRoutes) {
+                //if a partner doesn't support groups and has only county as destination - invalid route.
+                boolean groupNotSupporting = partnerRoute.getOriginDestination().isCountryOnly() && !isAirportGroupSupporting;
+                boolean isStrictSameRote = isStrictSameRoute(boRoute, partnerRoute);
 
+                if (groupNotSupporting && isStrictSameRote) {
+                    resultRoutes.add(boRoute);
+                    continue;
+                }
 
-
-
+                if (isStrictSameRote && Airports.isAirportGroup(boRoute.getDepartureName())) {
+                    routesWithAirportGroupForChecking.add(boRoute);
+                }
             }
         }
+
+        for (final Route routeForChecking : routesWithAirportGroupForChecking) {
+            for (final OutputRoute outputRoute : routeForChecking.getOutputRoutes()) {
+
+                Optional<Route> boRouteOpt = findRouteByOutputRoute(boRoutes, outputRoute);
+                if (!boRouteOpt.isPresent()) {
+                    continue;
+                }
+
+                final Route boRoute = boRouteOpt.get();
+                boolean isSameDeparture = Airports.isSameAirportGroupOrSameAirport(routeForChecking.getDepartureName(), boRoute.getDepartureName());
+                boolean isSameDestination = isStrictSameDestination(routeForChecking.getDestinationName(), boRoute.getDestinationName());
+                // checking correct or incorrect this route
+                if (!isSameDeparture || !isSameDestination) {
+                    resultRoutes.add(routeForChecking);
+                }
+            }
+        }
+
+        return resultRoutes;
+    }
+
+    protected Optional<Route> findRouteByOutputRoute(Set<Route> boRoutes, OutputRoute outputRoute) {
+        for (final Route boRoute : boRoutes) {
+            if (outputRoute.getOutputDepartureId().equals(boRoute.getDepartureId())
+                    && outputRoute.getOutputDestinationId().equals(boRoute.getDestinationId())) {
+                return Optional.of(boRoute);
+            }
+        }
+        return Optional.absent();
     }
 
     /**
@@ -119,6 +163,39 @@ public abstract class PrdComparatorImpl extends DataManager implements PrdCompar
             }
         }
         return !contain;
+    }
+
+    /**
+     * Example: boRoute-> 'gla: mahon, menorca, balearic islands, spain'
+     * partnerRoute-> 'gla: mahon, menorca, spain'
+     * as a result it is the same routes
+     *
+     * @param boRoute      boRoute
+     * @param partnerRoute partnerRoute
+     * @return true if the same
+     */
+    protected boolean isStrictSameRoute(final Route boRoute, final Route partnerRoute) {
+        final String departure = partnerRoute.getDepartureName();
+        final String destination = partnerRoute.getDestinationName();
+        final List<String> splitTwoDestinations = COMMA_SPLITTER.splitToList(destination);
+        final List<String> splitOneDestinations = COMMA_SPLITTER.splitToList(boRoute.getDestinationName());
+        if (partnerRoute.getOriginDestination() != null && partnerRoute.getOriginDestination().isCountryOnly()) {
+            return boRoute.getDepartureName().equals(departure) && boRoute.getDestinationName().equals(destination);
+        }
+        return boRoute.getDepartureName().equals(departure) && splitOneDestinations.containsAll(splitTwoDestinations);
+    }
+
+    protected boolean isStrictSameDestination(String boDestination, String partnerDestination) {
+        final List<String> splitTwoDestinations = COMMA_SPLITTER.splitToList(partnerDestination);
+        final List<String> splitOneDestinations = COMMA_SPLITTER.splitToList(boDestination);
+        return splitOneDestinations.containsAll(splitTwoDestinations);
+    }
+
+    protected boolean isSameRoute(final Route routeOne, final Route routeTwo) {
+        final String departure = routeTwo.getDepartureName();
+        final String destination = routeTwo.getDestinationName();
+        final List<String> splitDestinations = COMMA_SPLITTER.splitToList(destination);
+        return isSameRoute(routeOne, departure, destination, splitDestinations);
     }
 
     protected boolean isSameRoute(final Route route, final String departure, final String destination, final List<String> splitDestinations) {

@@ -13,12 +13,17 @@ public class ProviderConfig implements ConfigBo, ConfigPrdPartner, ConfigMapping
     private int departureIndex;
     private int[] destinationIndexes;
     private String mappingsFileName;
+    private boolean airportGroupSupporting;
     @JsonIgnore
     private String[] boHeaders;
     @JsonIgnore
     private String[] partnerHeaders;
     @JsonIgnore
     private String[] mappingsHeaders;
+
+    public boolean isAirportGroupSupporting() {
+        return airportGroupSupporting;
+    }
 
     public String getProviderName() {
         return providerName;

@@ -8,7 +8,8 @@
       "partnerFileName": "Departure_Airport_Destination_List.csv",
       "departureIndex": 1,
       "destinationIndexes": [2,3,4],
-      "mappingsFileName": "Teletext-Holidays-(08-10-2016).csv"
+      "mappingsFileName": "Teletext-Holidays-(08-10-2016).csv",
+      "airportGroupSupporting" : true
     },
     {
       "providerName" : "british_airway",
@@ -17,7 +18,8 @@
       "partnerFileName": "BA_PRD_02_03_2016.csv",
       "departureIndex": 12,
       "destinationIndexes": [0,1,2],
-      "mappingsFileName": "British-Airways-mappings-live-(08-05-2016).csv"
+      "mappingsFileName": "British-Airways-mappings-live-(08-05-2016).csv",
+      "airportGroupSupporting" : true
     },
     {
       "providerName" : "thomson",
@@ -26,7 +28,8 @@
       "partnerFileName": "Thomson_PRD_v1_6.csv",
       "departureIndex": 12,
       "destinationIndexes": [0,1,2],
-      "mappingsFileName": "Thomson-mappings(08-11-2016).csv"
+      "mappingsFileName": "Thomson-mappings(08-11-2016).csv",
+      "airportGroupSupporting" : false
     }
   ]
 }

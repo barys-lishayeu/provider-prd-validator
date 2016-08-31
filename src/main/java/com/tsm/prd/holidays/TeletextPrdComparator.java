@@ -3,6 +3,7 @@ package com.tsm.prd.holidays;
 import au.com.bytecode.opencsv.CSVReader;
 import com.tsm.prd.PrdComparatorImpl;
 import com.tsm.prd.objects.ConfigPrdPartner;
+import com.tsm.prd.objects.OriginDestination;
 import com.tsm.prd.objects.Route;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
@@ -26,8 +27,8 @@ public class TeletextPrdComparator extends PrdComparatorImpl {
 
             for (String[] line = importReader.readNext(); line != null; line = importReader.readNext()) {
                 final String departure = line[info.getDepartureIndex()];
-                final String destination = getDestinationByIndex(line, info.getDestinationIndexes());
-                Route route = new Route(departure, destination, line);
+                final OriginDestination destination = getDestinationByIndex(line, info.getDestinationIndexes());
+                Route route = new Route(departure, destination.toString(), destination, line);
                 cleanPartnerRoute(route);
                 routes.put(line[info.getDepartureIndex()], route);
             }
