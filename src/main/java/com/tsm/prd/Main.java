@@ -3,6 +3,7 @@ package com.tsm.prd;
 import com.tsm.prd.config.AppConfig;
 import com.tsm.prd.config.ConfigUtil;
 import com.tsm.prd.config.ProviderConfig;
+import com.tsm.prd.locations.LocationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +15,7 @@ public class Main {
 
     public static void main(String[] args) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         final AppConfig appConfig = ConfigUtil.getInstance().load();
+        LocationUtil.get().loadLocations();
 
         for (ProviderConfig providerConfig : appConfig.getProviderConfigs()) {
             final Class providerClass = Class.forName(providerConfig.getProviderClass());
