@@ -30,6 +30,36 @@
       "destinationIndexes": [0,1,2],
       "mappingsFileName": "Thomson-mappings(08-11-2016).csv",
       "airportGroupSupporting" : false
+    },
+    {
+      "providerName" : "travel_trolley",
+      "providerClass" : "com.tsm.prd.holidays.TravelTrolleyPrdComparator",
+      "boFileName": "holidays-routes-Travel Trolley-live-(09-05-2016).csv",
+      "partnerFileName": "TRAVELTROLLEY_PRD_07_10_2015.csv",
+      "departureIndex": 12,
+      "destinationIndexes": [0,1,2],
+      "mappingsFileName": "Travel Trolley-live-(09-05-2016).csv",
+      "airportGroupSupporting" : true
+    },
+    {
+      "providerName" : "perfect_holidays",
+      "providerClass" : "com.tsm.prd.holidays.PerfectHolidaysPrdComparator",
+      "boFileName": "holidays-routes-Perfect Holidays-live-(09-05-2016).csv",
+      "partnerFileName": "Perfect_Holidays_PRD_13_04_2016_v2.csv",
+      "departureIndex": 12,
+      "destinationIndexes": [0,1,2],
+      "mappingsFileName": "Perfect Holidays-live-(09-05-2016).csv",
+      "airportGroupSupporting" : true
+    },
+    {
+      "providerName" : "bargain_holidays_online",
+      "providerClass" : "com.tsm.prd.holidays.BargainHolidaysOnlinePrdComparator",
+      "boFileName": "holidays-routes-Bargain Holidays Online-live-(08-25-2016).csv",
+      "partnerFileName": "PRD Bargain Holidays Online.csv",
+      "departureIndex": 3,
+      "destinationIndexes": [0,1,2],
+      "mappingsFileName": "Bargain Holidays Online-live-(08-25-2016).csv",
+      "airportGroupSupporting" : true
     }
   ]
 }

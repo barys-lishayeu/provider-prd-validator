@@ -150,7 +150,7 @@ public abstract class DataManager {
     protected String providerPath() {
         return getRootPath() + File.separator + getProviderName() + File.separator;
     }
-
+    
     protected void cleanBoRoute(Route route) {
         // clean departure
         Optional<String> newDeparture = MatcherUtil.apply(route.getDepartureName(), CodeMatcher.get(), AllAirportsMatcher.get());
