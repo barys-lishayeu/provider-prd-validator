@@ -1,6 +1,5 @@
 package com.tsm.prd;
 
-import com.google.common.base.Optional;
 import com.tsm.prd.config.ProviderConfig;
 import com.tsm.prd.locations.LocationUtil;
 import com.tsm.prd.matchers.AllAirportsMatcher;
@@ -71,6 +70,7 @@ public abstract class PrdComparatorImpl extends DataManager implements PrdCompar
         }
         writeInCsv(routesNotGrouped, StepMessage.NOT_IN_THE_AIRPORT_GROUP, providerConfig.getPartnerHeaders());
 
+        // check output routes for groups
         Pair<Set<Route>, Set<Route>> invalidRoutesInGroup = checkingOutputRoutesInGroups(partnerRoutes, boRoutes, providerConfig.isAirportGroupSupporting());
         writeInCsv(invalidRoutesInGroup.getKey(), StepMessage.WRONG_GROUP_FOR_OUTPUT_ROUTE, providerConfig.getBoHeaders());
         writeInCsv(invalidRoutesInGroup.getValue(), StepMessage.INVALID_OUT_ROUTES_IN_GROUP, providerConfig.getBoHeaders());
@@ -148,16 +148,6 @@ public abstract class PrdComparatorImpl extends DataManager implements PrdCompar
         return false;
     }
 
-    protected Optional<Route> findRouteByOutputRoute(Set<Route> boRoutes, OutputRoute outputRoute) {
-        for (final Route boRoute : boRoutes) {
-            if (outputRoute.getOutputDepartureId().equals(boRoute.getDepartureId())
-                    && outputRoute.getOutputDestinationId().equals(boRoute.getDestinationId())) {
-                return Optional.of(boRoute);
-            }
-        }
-        return Optional.absent();
-    }
-
     /**
      * Key - departure
      * Value - destination
@@ -183,19 +173,42 @@ public abstract class PrdComparatorImpl extends DataManager implements PrdCompar
 
         // check if first is not in two
         for (Route route : first) {
-            if (isNotContainRoute(route.getDepartureName(), route.getDestinationName(), two)) {
+            if (isNotContainRoute(route, two)) {
                 results.add(route);
             }
         }
         return results;
     }
 
-    protected boolean isNotContainRoute(final String departure, String destination, final Set<Route> set) {
+    protected boolean isNotContainRoute(final String departure, final String destination, final Set<Route> set) {
         boolean contain = false;
         final List<String> splitDestinations = COMMA_SPLITTER.splitToList(destination);
 
         for (Route routeTwo : set) {
             if (isSameRoute(routeTwo, departure, destination, splitDestinations)) {
+                contain = true;
+                break;
+            }
+        }
+        return !contain;
+    }
+
+    protected boolean isNotContainRoute(final Route route, final Set<Route> set) {
+        boolean contain = false;
+        final List<String> splitDestinations = COMMA_SPLITTER.splitToList(route.getDestinationName());
+
+        OriginDestination originDestination = route.getOriginDestination();
+//        if(originDestination != null && providerConfig.isAirportGroupSupporting()) {
+//
+//        }
+
+        for (Route routeTwo : set) {
+
+//            if(route.getOriginal()[0].equalsIgnoreCase("571df77ae4b0dcfea3c5d859") && routeTwo.getDestinationName().contains("gran canaria")) {
+//                System.out.println("");
+//            }
+
+            if (isSameRoute(routeTwo, route.getDepartureName(), route.getDestinationName(), splitDestinations)) {
                 contain = true;
                 break;
             }
@@ -221,19 +234,6 @@ public abstract class PrdComparatorImpl extends DataManager implements PrdCompar
             return boRoute.getDepartureName().equals(departure) && boRoute.getDestinationName().equals(destination);
         }
         return boRoute.getDepartureName().equals(departure) && splitOneDestinations.containsAll(splitTwoDestinations);
-    }
-
-    protected boolean isStrictSameDestination(String boDestination, String partnerDestination) {
-        final List<String> splitTwoDestinations = COMMA_SPLITTER.splitToList(partnerDestination);
-        final List<String> splitOneDestinations = COMMA_SPLITTER.splitToList(boDestination);
-        return splitOneDestinations.containsAll(splitTwoDestinations);
-    }
-
-    protected boolean isSameRoute(final Route routeOne, final Route routeTwo) {
-        final String departure = routeTwo.getDepartureName();
-        final String destination = routeTwo.getDestinationName();
-        final List<String> splitDestinations = COMMA_SPLITTER.splitToList(destination);
-        return isSameRoute(routeOne, departure, destination, splitDestinations);
     }
 
     protected boolean isSameRoute(final Route route, final String departure, final String destination, final List<String> splitDestinations) {
