@@ -58,7 +58,7 @@ public final class Airports {
         AIRPORTS_GROUPS.putAll("Midlands", Lists.newArrayList("BHX", "CVT", "EMA", "NWI"));
         AIRPORTS_GROUPS.putAll("North East", Lists.newArrayList("HUY", "LBA", "MME", "NCL"));
         AIRPORTS_GROUPS.putAll("North West", Lists.newArrayList("BLK", "LBA", "LPL", "MAN"));
-        AIRPORTS_GROUPS.putAll("Northern Ireland", Lists.newArrayList("BFS"));
+        AIRPORTS_GROUPS.putAll("Northern Ireland", Lists.newArrayList("BFS", "BHD", "DUB"));
         AIRPORTS_GROUPS.putAll("Scotland", Lists.newArrayList("ABZ", "EDI", "GLA", "INV", "PIK"));
         AIRPORTS_GROUPS.putAll("South East", Lists.newArrayList("BOH", "LGW", "LHR", "LTN", "SOU", "STN"));
         AIRPORTS_GROUPS.putAll("South West and Wales", Lists.newArrayList("EXT", "BRS", "CWL"));
